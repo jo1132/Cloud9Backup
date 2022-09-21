@@ -1,0 +1,25 @@
+version: 0.2
+
+phases:
+  pre_build:
+    commands:
+      - echo Logging in to Amazon ECR...
+      - ls
+      - ECRLogin
+  build:
+    commands:
+      - echo Build started on `date`
+      - echo Building the Docker image...
+      - cat app.py
+      - docker build -t ai_text_process .
+      - docker tag ai_text_process:latest ECRrepo:latest
+      - today=$(date "+%Y%m%d")
+      - docker tag ai_text_process:latest ECRrepo:$today
+  post_build:
+    commands:
+      - echo Build completed on `date`
+      - echo Pushing the Docker image...
+      - docker push ECRrepo:latest
+      - docker push ECRrepo:$today
+      - echo Deploy New Image to Lambda function...
+      - aws lambda update-function-code --region ap-northeast-2 --function-name LambdaNAme --image-uri ECRrepo:latest

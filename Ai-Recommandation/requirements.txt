@@ -1,0 +1,4 @@
+# 20220825 ver1 requirements
+pymysql
+pandas
+scikit-learn
